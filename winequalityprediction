@@ -1,0 +1,37 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sb
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn import metrics
+from sklearn.svm import SVC
+from xgboost import XGBClassifier
+from sklearn.linear_model import LogisticRegression
+import warnings
+warnings.filterwarnings('ignore')
+data=pd.read_csv('/content/drive/MyDrive/WineQT (1).csv')
+data.head()
+data.info()
+plt.figure(figsize=(12, 12))
+sb.heatmap(data.corr() > 0.7, annot=True, cbar=False)
+plt.show()plt.figure(figsize=(5,5))
+sb.boxplot(x='quality',y='fixed acidity',data=data.sort_values('fixed acidity',ascending=True))
+sb.scatterplot(x='citric acid',y='density',data=data)
+data.isnull().sum()
+data['best quality']=[1 if x>5 else 0 for x in data.quality]
+features=data.drop(['quality','best quality'],axis=1)
+target=data['best quality']
+xtrain,xtest,ytrain,ytest=train_test_split(features,target,test_size=0.2,random_state=40)
+xtrain.shape,xtest.shape
+from sklearn.linear_model import LogisticRegression
+lr=LogisticRegression()
+lr = LogisticRegression()
+lr.fit(features,target)
+lr.fit(xtrain,ytrain)
+predictions = lr.predict(features)
+Scores = pd.DataFrame({'Actual':target,'Predictions':predictions})
+Scores.head()
+temp=lr.predict(xtest)
+from sklearn.metrics import accuracy_score
+print(accuracy_score(ytest,temp)*100,'%')
